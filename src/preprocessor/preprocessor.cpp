@@ -116,12 +116,19 @@ void Preprocessor::Tighten(bool loop) {
 	if (unsat) return;
 	assert(nvars <= vars);
 	vector<Var> new_var_map(nvars+1);
+	std::set<unsigned> tmp_ind_sup;
+	tmp_ind_sup.insert(ind_supp.begin(), ind_supp.end());
+	ind_supp.clear();
 	for (Var v = 1; v <= vars; v++){
 		if (map_to[v]) {
 			assert(map_to[v] <= nvars);
 			new_var_map[map_to[v]] = var_map[v];
+			if (tmp_ind_sup.find((unsigned) v) != tmp_ind_sup.end()) {
+				ind_supp.insert(v);
+			}
 		}
 	}
+	tmp_ind_sup.clear();
 	var_map = new_var_map;
 	vars = nvars;
 	bool unit = false;
@@ -151,7 +158,7 @@ void Preprocessor::Tighten(bool loop) {
 Instance Preprocessor::Preprocess(Instance inst, const string& techniques) {
 	weighted = inst.weighted;
 	weights = inst.weights;
-	return Preprocess(inst.vars, inst.clauses, techniques);
+	return Preprocess(inst.vars, inst.clauses, inst.independent_support_, techniques);
 }
 
 void Preprocessor::FailedLiterals() {
@@ -670,7 +677,7 @@ bool Preprocessor::DoTechniques(const string& techniques, int l, int r) {
 		} else {
 			assert(false);
 		}
-		cout<<"c o PP: "<<techniques[l]<<" "<<vars<<" "<<clauses.size()<<" "<<learned_clauses.size()<<" "<<timer.get()<<endl;
+		cout<<"c o PP: "<<techniques[l]<<" "<<vars<<" "<<clauses.size()<<" "<<learned_clauses.size()<< " " << ind_supp.size() < " " <<timer.get()<<endl;
 	} else if (techniques[l] == '[' && techniques[r] == ']') {
 		fixpoint = false;
 		while (!fixpoint) {
@@ -700,7 +707,8 @@ bool Preprocessor::DoTechniques(const string& techniques, int l, int r) {
 	return fixpoint;
 }
 
-Instance Preprocessor::Preprocess(int vars_, vector<vector<Lit>> clauses_, string techniques) {
+Instance Preprocessor::Preprocess(int vars_, vector<vector<Lit>> clauses_, 
+	std::set<unsigned>ind_supp_, string techniques) {
 	if (techniques.empty() || techniques[0] != 'F') {
 		techniques = "F" + techniques;
 	}
@@ -708,6 +716,8 @@ Instance Preprocessor::Preprocess(int vars_, vector<vector<Lit>> clauses_, strin
 	assert(orig_vars == 0);
 	vars = vars_;
 	clauses = clauses_;
+	ind_supp.clear();
+	ind_supp = ind_sup_;
 	learned_clauses.clear();
 	timer.start();
 	orig_vars = vars;
@@ -717,7 +727,7 @@ Instance Preprocessor::Preprocess(int vars_, vector<vector<Lit>> clauses_, strin
 		var_map[v] = v;
 	}
 	Tighten(false);
-	cout<<"c o Init PP "<<vars<<" "<<clauses.size()<<" "<<timer.get()<<endl;
+	cout<<"c o Init PP "<<vars<<" "<<clauses.size()<<" "<<ind_supp.size() << " " <<timer.get()<<endl;
 	DoTechniques(techniques, 0, (int)techniques.size()-1);
 	return MapBack();
 }

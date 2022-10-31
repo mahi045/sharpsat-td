@@ -4,12 +4,12 @@
 #include "instance.hpp"
 
 #include <map>
-
+#include <set>
 namespace sspp {
 class Preprocessor {
  public:
  	Instance Preprocess(Instance ins, const string& techniques);
- 	Instance Preprocess(int vars_, vector<vector<Lit>> clauses_, string techniques);
+ 	Instance Preprocess(int vars_, vector<vector<Lit>> clauses_, std::set<unsigned> ind_supp_, string techniques);
  	int FreeVars() const;
  	void SetMaxGTime(double time);
  	void SetMaxSparsTime(double time);
@@ -29,6 +29,7 @@ class Preprocessor {
  	void Tighten(bool loop);
  	int vars = 0;
  	vector<vector<Lit>> clauses, learned_clauses;
+	std::set<unsigned> ind_supp;
  	Timer timer;
 
  	int orig_vars = 0;

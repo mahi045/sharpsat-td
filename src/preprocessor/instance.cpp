@@ -116,6 +116,17 @@ Instance::Instance(string input_file, bool weighted_) {
 			weights[lit] = w;
 			weights[Neg(lit)] = (double)1-w;
 			read_weights++;
+		} else if (tokens[0] == "c" and tokens[1] == "ind") {
+			for (string& t : tokens) {
+				if (t == "c" || t == "ind")
+					continue;
+				assert(IsInt(t, 0, vars));
+				int dlit = stoi(t);
+				if (dlit == 0) {
+					continue;
+				}
+				independent_support_.insert(dlit);
+			}
 		} else if (tokens[0] == "c") {
 			continue;
 		} else if (format == 0 && tokens.size() == 4 && tokens[0] == "p" && tokens[1] == "cnf") {
@@ -159,6 +170,9 @@ Instance::Instance(string input_file, bool weighted_) {
 		cout<<"c o Warning: p line mismatch. Claimed clauses: "<<pline_clauses<<" actual clauses: "<<read_clauses<<endl;
 	}
 	cout<<"c o Parsed "<<vars<<" vars, "<<clauses.size()<<" clauses, and "<<read_weights<<" weights."<<endl;
+	if (independent_support_.size() > 0) {
+		cout << "c o Independent support present, size: " << independent_support_.size() << endl;
+	}
 	UpdClauseInfo();
 }
 

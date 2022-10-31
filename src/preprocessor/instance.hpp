@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <ostream>
-
+#include <set>
 #include "utils.hpp"
 #include "graph.hpp"
 #include "../mpfr/mpreal.h"
@@ -33,6 +33,7 @@ struct Instance {
 	mpfr::mpreal weight_factor = 1;
 
   vector<double> weights;
+  std::set <unsigned> independent_support_;
   int total_lits = 0;
  private:
  	Lit RecConstruct(vector<Lit> clause);
