@@ -677,7 +677,7 @@ bool Preprocessor::DoTechniques(const string& techniques, int l, int r) {
 		} else {
 			assert(false);
 		}
-		cout<<"c o PP: "<<techniques[l]<<" "<<vars<<" "<<clauses.size()<<" "<<learned_clauses.size()<< " " << ind_supp.size() < " " <<timer.get()<<endl;
+		cout<<"c o PP: "<<techniques[l]<<" "<<vars<<" "<<clauses.size()<<" "<<learned_clauses.size()<< " " << ind_supp.size() << " " <<timer.get()<<endl;
 	} else if (techniques[l] == '[' && techniques[r] == ']') {
 		fixpoint = false;
 		while (!fixpoint) {
@@ -717,7 +717,7 @@ Instance Preprocessor::Preprocess(int vars_, vector<vector<Lit>> clauses_,
 	vars = vars_;
 	clauses = clauses_;
 	ind_supp.clear();
-	ind_supp = ind_sup_;
+	ind_supp = ind_supp_;
 	learned_clauses.clear();
 	timer.start();
 	orig_vars = vars;
