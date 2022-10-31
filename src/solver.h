@@ -689,7 +689,7 @@ retStateT Solver<T_num>::resolveConflict(smStateT &sm_state) {
 	assert(
 			stack_.top().remaining_components_ofs() <= comp_manager_.component_stack_size());
 
-	if (sm_state == NIL) 
+	if (sm_state == NIL) {
 		assert(uip_clauses_.size() == 1); }
 
 		// DEBUG

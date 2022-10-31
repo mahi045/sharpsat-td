@@ -335,9 +335,9 @@ inline bool AltComponentAnalyzer<T_num>::exploreRemainingCompOf(VariableIndex v)
     T_num iw = LitWeight(LiteralID(v, true)) + LitWeight(LiteralID(v, false));
     // I do not know what is going on but it is ok as long as it is unweighted model counting
     if (independent_support_.count(v) == 0) {
-      archetype_.stack_level().includeSolution(1);
+      archetype_.stack_level().includeSolution(T_num::One());
     } else {
-      archetype_.stack_level().includeSolution(2);
+      archetype_.stack_level().includeSolution(T_num::One() + T_num::One());
     }
     archetype_.setVar_in_other_comp(v);
     return false;
