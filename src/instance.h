@@ -112,6 +112,7 @@ protected:
 
   vector<Variable> variables_;
   LiteralIndexedVector<TriValue> literal_values_;
+  std::set<unsigned> independent_support_;
 
   vector<unsigned long> gluec_;
   unsigned long gluec_it_ = 1;
@@ -691,6 +692,10 @@ bool Instance<T_num>::createfromPPIns(const sspp::Instance& pp_ins) {
   variables_.push_back(Variable()); //initializing the Sentinel
   literal_values_.clear();
   unit_clauses_.clear();
+
+  independent_support_.clear();
+  independent_support_ = pp_ins.independent_support_;
+  cout << "Independent support size: " << independent_support_.size() << endl;
 
 
   /*

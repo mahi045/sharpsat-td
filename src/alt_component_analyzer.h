@@ -14,6 +14,7 @@
 #include "component_types/component.h"
 #include "component_types/component_archetype.h"
 
+#include <set>
 #include <vector>
 #include <cmath>
 #include <gmpxx.h>
@@ -27,7 +28,9 @@ class AltComponentAnalyzer {
 public:
 	AltComponentAnalyzer(DataAndStatistics<T_num> &statistics,
         LiteralIndexedVector<TriValue> & lit_values,
-        const LiteralIndexedVector<T_num> & lit_weights) :
+        const LiteralIndexedVector<T_num> & lit_weights,
+        set <unsigned> & independent_support) :
+        independent_support_(independent_support),
         statistics_(statistics), literal_values_(lit_values), lit_weights_(lit_weights) {
   }
 
@@ -133,6 +136,8 @@ private:
   LiteralIndexedVector<TriValue> & literal_values_;
 
   const LiteralIndexedVector<T_num> & lit_weights_;
+
+  set<unsigned> & independent_support_;
 
   inline T_num LitWeight(const LiteralID lit) {
     if (lit_weights_.empty()) {
@@ -328,7 +333,12 @@ inline bool AltComponentAnalyzer<T_num>::exploreRemainingCompOf(VariableIndex v)
 
   if (search_stack_.size() == 1) {
     T_num iw = LitWeight(LiteralID(v, true)) + LitWeight(LiteralID(v, false));
-    archetype_.stack_level().includeSolution(iw);
+    // I do not know what is going on but it is ok as long as it is unweighted model counting
+    if (independent_support_.count(v) == 0) {
+      archetype_.stack_level().includeSolution(1);
+    } else {
+      archetype_.stack_level().includeSolution(2);
+    }
     archetype_.setVar_in_other_comp(v);
     return false;
   }

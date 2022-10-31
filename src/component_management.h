@@ -28,9 +28,10 @@ class ComponentManager {
 public:
   ComponentManager(SolverConfiguration &config, DataAndStatistics<T_num> &statistics,
         LiteralIndexedVector<TriValue> & lit_values,
-        LiteralIndexedVector<T_num> & lit_weights) :
+        LiteralIndexedVector<T_num> & lit_weights,
+        set<unsigned> &independent_support_) :
         config_(config), statistics_(statistics), cache_(statistics),
-        ana_(statistics,lit_values,lit_weights) {
+        ana_(statistics,lit_values,lit_weights,independent_support_) {
   }
 
   void initialize(LiteralIndexedVector<Literal> & literals,
