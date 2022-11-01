@@ -124,7 +124,7 @@ void Preprocessor::Tighten(bool loop) {
 			assert(map_to[v] <= nvars);
 			new_var_map[map_to[v]] = var_map[v];
 			if (tmp_ind_sup.find((unsigned) v) != tmp_ind_sup.end()) {
-				ind_supp.insert(v);
+				ind_supp.insert(map_to[v]);
 			}
 		}
 	}
@@ -158,6 +158,7 @@ void Preprocessor::Tighten(bool loop) {
 Instance Preprocessor::Preprocess(Instance inst, const string& techniques) {
 	weighted = inst.weighted;
 	weights = inst.weights;
+	ind_supp = inst.independent_support_;
 	return Preprocess(inst.vars, inst.clauses, inst.independent_support_, techniques);
 }
 
@@ -277,6 +278,12 @@ Instance Preprocessor::MapBack() {
 		assert(clause.size() >= 2);
 		ret.AddLearnedClause(clause);
 	}
+	cout << "Independent support atoms: ";
+	for (const auto& var : ind_supp) {
+		cout << var << " ";
+		ret.independent_support_.insert(var);
+	}
+	cout << endl;
 	free_vars = orig_vars - vars;
 	for (Var v = 1; v <= orig_vars; v++) {
 		if (assign[v]) {

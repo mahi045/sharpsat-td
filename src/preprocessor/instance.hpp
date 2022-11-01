@@ -11,7 +11,7 @@ namespace sspp {
 struct Instance {
 	Instance(string input_file, bool weighted_);
 	Instance(int vars_);
-	Instance(int vars_, vector<vector<Lit>> clauses_);
+	Instance(int vars_, vector<vector<Lit>> clauses_, std::set<unsigned>independent_support_);
 
 	Var AddVar();
 	void AddClause(vector<Lit> clause);

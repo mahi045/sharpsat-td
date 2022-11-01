@@ -78,7 +78,7 @@ void Instance::UpdClauseInfo() {
 	}
 }
 
-Instance::Instance(int vars_, vector<vector<Lit>> clauses_) : vars(vars_), clauses(clauses_) {
+Instance::Instance(int vars_, vector<vector<Lit>> clauses_, std::set<unsigned> ind_supp) : vars(vars_), clauses(clauses_), independent_support_(ind_supp) {
 	UpdClauseInfo();
 	for (const auto& clause : clauses) {
 		for (int i = 0; i < (int)clause.size(); i++) {

@@ -162,9 +162,9 @@ int main(int argc, char *argv[]) {
     sspp::Preprocessor ppp;
     ppp.SetMaxGTime(150);
     ppp.SetMaxSparsTime(120);
-    ins = ppp.Preprocess(ins, "FPVSEGV");
+    ins = ppp.Preprocess(ins, "");
     ins.UpdClauseInfo();
-    cout<<"c o Preprocessed. "<<glob_timer.get()<<"s Vars: "<<ins.vars<<" Clauses: "<<ins.clauses.size()<<" Free vars: "<<ppp.FreeVars()<<endl;
+    cout<<"c o Preprocessed. "<<glob_timer.get()<<"s Vars: "<<ins.vars<<" Clauses: "<<ins.clauses.size()<<" Free vars: "<<ppp.FreeVars()<<" independent support: "<<ins.independent_support_.size() <<endl;
     if (ins.vars == 1) {
       assert(ins.clauses.size() == 2);
       PrintSat(false);
