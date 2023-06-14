@@ -455,14 +455,14 @@ T_num Solver<T_num>::solve(const sspp::Instance& pp_ins, const sspp::TreeDecompo
 
 		Instance<T_num>::PrepareTWScore(tdec, config_.decomp_weight, config_.weight_mode);
 
-		violated_clause.reserve(Instance<T_num>::num_variables());
+		// violated_clause.reserve(Instance<T_num>::num_variables());
 
-		comp_manager_.initialize(Instance<T_num>::literals_, Instance<T_num>::literal_pool_, hasher_);
+		// comp_manager_.initialize(Instance<T_num>::literals_, Instance<T_num>::literal_pool_, hasher_);
 
-		Instance<T_num>::statistics_.exit_state_ = countSAT();
+		// Instance<T_num>::statistics_.exit_state_ = countSAT();
 
-		Instance<T_num>::statistics_.set_final_solution_count(stack_.top().getTotalModelCount());
-		Instance<T_num>::statistics_.num_long_conflict_clauses_ = Instance<T_num>::num_conflict_clauses();
+		// Instance<T_num>::statistics_.set_final_solution_count(stack_.top().getTotalModelCount());
+		// Instance<T_num>::statistics_.num_long_conflict_clauses_ = Instance<T_num>::num_conflict_clauses();
 
 	} else {
 		Instance<T_num>::statistics_.exit_state_ = SUCCESS;
@@ -471,8 +471,8 @@ T_num Solver<T_num>::solve(const sspp::Instance& pp_ins, const sspp::TreeDecompo
 	stopwatch_.stop();
 	Instance<T_num>::statistics_.time_elapsed_ = stopwatch_.getElapsedSeconds();
 
-	comp_manager_.gatherStatistics();
-	Instance<T_num>::statistics_.printShort();
+	// comp_manager_.gatherStatistics();
+	// Instance<T_num>::statistics_.printShort();
 	return Instance<T_num>::statistics_.final_solution_count();
 }
 

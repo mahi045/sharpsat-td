@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
     sspp::Preprocessor ppp;
     ppp.SetMaxGTime(150);
     ppp.SetMaxSparsTime(120);
-    ins = ppp.Preprocess(ins, "FPVSEGV");
+    // ins = ppp.Preprocess(ins, "FPVSEGV");
     ins.UpdClauseInfo();
     cout<<"c o Preprocessed. "<<glob_timer.get()<<"s Vars: "<<ins.vars<<" Clauses: "<<ins.clauses.size()<<" Free vars: "<<ppp.FreeVars()<<endl;
     if (ins.vars == 1) {
@@ -190,12 +190,12 @@ int main(int argc, char *argv[]) {
       theSolver.statistics().maximum_cache_size_bytes_ = max_cache;
     }
     mpz_class ans = theSolver.solve(ins, tdecomp).Get();
-    cout<<"c o Solved. "<<glob_timer.get()<<endl;
-    ans *= ans0;
-    PrintSat(true);
-    PrintType(ins);
-    PrintLog10(ans);
-    PrintExact(ans);
+    // cout<<"c o Solved. "<<glob_timer.get()<<endl;
+    // ans *= ans0;
+    // PrintSat(true);
+    // PrintType(ins);
+    // PrintLog10(ans);
+    // PrintExact(ans);
     return 0;
   } else if (weighted == 1 || weighted == 2) {
     sspp::Instance ins(input_file, true);

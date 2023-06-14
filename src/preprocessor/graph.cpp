@@ -949,6 +949,13 @@ vector<int> TreeDecomposition::GetOrd() const {
   int centroid = Centroid();
   assert(centroid >= 1 && centroid <= bs);
   vector<int> ret(n);
+  cout << "c the number of bags: " << bs << endl;
+  cout << "c the size of cut: " << bags[centroid].size() << endl;
+  cout << "c tree decomposition cut: ";
+  for (int v : bags[centroid]) {
+    cout << v << ",";
+  }
+  cout << "0" << endl;
   OdDes(centroid, 0, 1, ret);
   for (int i = 0; i < n; i++) {
     assert(ret[i] > 0);
