@@ -139,7 +139,7 @@ private:
 
 	SOLVER_StateT countSAT();
 
-	void decideLiteral(smStateT& sms);
+	bool decideLiteral();
 	bool bcp();
 
 
@@ -157,12 +157,12 @@ private:
 	// beginingg at offset start_at_stack_ofs
 	bool BCP(unsigned start_at_stack_ofs);
 
-	retStateT backtrack(smStateT& sms);
+	retStateT backtrack();
 
 	// if on the current decision level
 	// a second branch can be visited, RESOLVED is returned
 	// otherwise returns BACKTRACK
-	retStateT resolveConflict(smStateT& sms);
+	retStateT resolveConflict();
 
 	/////////////////////////////////////////////
 	//  BEGIN small helper functions
@@ -482,18 +482,24 @@ T_num Solver<T_num>::solve(const sspp::Instance& pp_ins, const sspp::TreeDecompo
 template <class T_num>
 SOLVER_StateT Solver<T_num>::countSAT() {
 	retStateT state = RESOLVED;
-	smStateT sm_state = NIL;
 	while (true) {
 		//debugStack();
 		while (comp_manager_.findNextRemainingComponentOf(stack_.top(), hasher_)) {
 			//debugStack();
-			decideLiteral(sm_state);
+			bool ret = decideLiteral();
+			if (!ret) {
+				stack_.top().mark_branch_unsat();
+				stack_.top().changeBranch();
+				stack_.top().mark_branch_unsat();
+				state = BACKTRACK;
+				break;
+      		}
 			if (stopwatch_.interval_tick())
 				printOnlineStats();
 			//debugStack();
-			while (sm_state == CONFLICT || !bcp()) {
+			while (!bcp()) {
 				//debugStack();
-				state = resolveConflict(sm_state);
+				state = resolveConflict();
 				if (state == BACKTRACK)
 					break;
 			}
@@ -501,22 +507,18 @@ SOLVER_StateT Solver<T_num>::countSAT() {
 				break;
 		}
 		//debugStack();
-		state = backtrack(sm_state);
-		if (sm_state == CONFLICT) 
-			sm_state = NIL;
+		state = backtrack();
 		//debugStack();
 		if (state == EXIT)
 			return SUCCESS;
 		while (state != PROCESS_COMPONENT && !bcp()) {
 			//debugStack();
-			state = resolveConflict(sm_state);
+			state = resolveConflict();
 			//debugStack();
 			if (state == BACKTRACK) {
-				state = backtrack(sm_state);
+				state = backtrack();
 				if (state == EXIT)
 					return SUCCESS;
-				if (sm_state == CONFLICT) 
-					sm_state = NIL;
 			}
 		}
 	}
@@ -525,7 +527,7 @@ SOLVER_StateT Solver<T_num>::countSAT() {
 
 
 template <class T_num>
-void Solver<T_num>::decideLiteral(smStateT& sm_state) {
+bool Solver<T_num>::decideLiteral() {
 	// establish another decision stack level
 	stack_.push_back(
 			StackLevel<T_num>(stack_.top().currentRemainingComponent(),
@@ -563,7 +565,7 @@ void Solver<T_num>::decideLiteral(smStateT& sm_state) {
 		}
 	}
 	if (p_max_score_var == 0) {
-		sm_state = CONFLICT;
+		return false;
 	}
 	else {
 		max_score_var = p_max_score_var;
@@ -586,10 +588,11 @@ void Solver<T_num>::decideLiteral(smStateT& sm_state) {
        // decayActivitiesOf(comp_manager_.superComponentOf(stack_.top()));
 	assert(
 			stack_.top().remaining_components_ofs() <= comp_manager_.component_stack_size());
+	return true;
 }
 
 template <class T_num>
-retStateT Solver<T_num>::backtrack(smStateT &sm_state) {
+retStateT Solver<T_num>::backtrack() {
 	assert(
 			stack_.top().remaining_components_ofs() <= comp_manager_.component_stack_size());
 	do {
@@ -628,9 +631,9 @@ retStateT Solver<T_num>::backtrack(smStateT &sm_state) {
 }
 
 template <class T_num>
-retStateT Solver<T_num>::resolveConflict(smStateT &sm_state) {
-	if (sm_state == NIL) {
-		recordLastUIPCauses();
+retStateT Solver<T_num>::resolveConflict() {
+	
+	recordLastUIPCauses();
 
 	if (Instance<T_num>::statistics_.num_decisions_ > 2000000
 	 && Instance<T_num>::statistics_.num_conflicts_ < 1000) {
@@ -689,13 +692,13 @@ retStateT Solver<T_num>::resolveConflict(smStateT &sm_state) {
 	assert(
 			stack_.top().remaining_components_ofs() <= comp_manager_.component_stack_size());
 
-	if (sm_state == NIL) {
-		assert(uip_clauses_.size() == 1); }
+	
+		assert(uip_clauses_.size() == 1); 
 
 		// DEBUG
 		if (uip_clauses_.back().size() == 0)
 			cout << " EMPTY CLAUSE FOUND" << endl;
-	}
+	//}
 	// END DEBUG
 
 	stack_.top().mark_branch_unsat();
@@ -712,7 +715,7 @@ retStateT Solver<T_num>::resolveConflict(smStateT &sm_state) {
 	// this is because we might have checked a literal
 	// during implict BCP which has been a failed literal
 	// due only to assignments made at lower decision levels
-	if (sm_state == NIL && uip_clauses_.back().front() == TOS_decLit().neg()) {
+	if (uip_clauses_.back().front() == TOS_decLit().neg()) {
 		assert(TOS_decLit().neg() == uip_clauses_.back()[0]);
 		Instance<T_num>::var(TOS_decLit().neg()).ante = Instance<T_num>::addUIPConflictClause(
 				uip_clauses_.back());
