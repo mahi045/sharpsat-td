@@ -482,7 +482,7 @@ SOLVER_StateT Solver<T_num>::countSAT() {
 
 	while (true) {
 		//debugStack();
-		while (comp_manager_.findNextRemainingComponentOf(stack_.top(), hasher_)) {
+		while (comp_manager_.findNextRemainingComponentOf(stack_.get_decision_level(), stack_.top(), hasher_)) {
 			//debugStack();
 			decideLiteral();
 			if (stopwatch_.interval_tick())
@@ -725,6 +725,7 @@ template <class T_num>
 bool Solver<T_num>::bcp() {
 // the asserted literal has been set, so we start
 // bcp on that literal
+	auto start = high_resolution_clock::now();
 	unsigned start_ofs = literal_stack_.size() - 1;
 
 //BEGIN process unit clauses
@@ -733,7 +734,8 @@ bool Solver<T_num>::bcp() {
 //END process unit clauses
 
 	bool bSucceeded = BCP(start_ofs);
-
+	auto stop = high_resolution_clock::now();
+  	Instance<T_num>::statistics_.time_spend_in_bcp += (duration_cast<microseconds>(stop - start).count() / pow(10, 6));
 	return bSucceeded;
 }
 
