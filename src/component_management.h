@@ -73,9 +73,9 @@ public:
   // returns true if a non-trivial non-cached component
   // has been found and is now stack_.TOS_NextComp()
   // returns false if all components have been processed;
-  inline bool findNextRemainingComponentOf(StackLevel<T_num> &top, const Hasher& hasher);
+  inline bool findNextRemainingComponentOf(int level, StackLevel<T_num> &top, const Hasher& hasher);
 
-  inline void recordRemainingCompsFor(StackLevel<T_num> &top, const Hasher& hasher);
+  inline void recordRemainingCompsFor(int level, StackLevel<T_num> &top, const Hasher& hasher);
 
   inline void sortComponentStackRange(unsigned start, unsigned end);
 
@@ -111,10 +111,10 @@ void ComponentManager<T_num>::sortComponentStackRange(unsigned start, unsigned e
   }
 
 template <class T_num>
-bool ComponentManager<T_num>::findNextRemainingComponentOf(StackLevel<T_num> &top, const Hasher& hasher) {
+bool ComponentManager<T_num>::findNextRemainingComponentOf(int level, StackLevel<T_num> &top, const Hasher& hasher) {
     // record Remaining Components if there are none!
     if (component_stack_.size() <= top.remaining_components_ofs())
-      recordRemainingCompsFor(top, hasher);
+      recordRemainingCompsFor(level, top, hasher);
     assert(!top.branch_found_unsat());
     if (top.hasUnprocessedComponents())
       return true;
@@ -125,7 +125,7 @@ bool ComponentManager<T_num>::findNextRemainingComponentOf(StackLevel<T_num> &to
   }
 
 template <class T_num>
-inline void ComponentManager<T_num>::recordRemainingCompsFor(StackLevel<T_num> &top, const Hasher& hasher) {
+inline void ComponentManager<T_num>::recordRemainingCompsFor(int level, StackLevel<T_num> &top, const Hasher& hasher) {
    Component & super_comp = superComponentOf(top);
    unsigned new_comps_start_ofs = component_stack_.size();
 
@@ -149,6 +149,13 @@ inline void ComponentManager<T_num>::recordRemainingCompsFor(StackLevel<T_num> &
 
    top.set_unprocessed_components_end(component_stack_.size());
    sortComponentStackRange(new_comps_start_ofs, component_stack_.size());
+   if (component_stack_.size() - new_comps_start_ofs > 1) {
+    if (statistics_.decomposition_node.find(level) == statistics_.decomposition_node.end()) {
+      statistics_.decomposition_node[level] =  1;
+    } else {
+      statistics_.decomposition_node[level] = statistics_.decomposition_node[level] + 1;
+    }
+  }
 }
 
 template<class T_num>

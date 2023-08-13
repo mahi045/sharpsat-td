@@ -196,6 +196,13 @@ int main(int argc, char *argv[]) {
     PrintType(ins);
     PrintLog10(ans);
     PrintExact(ans);
+    cout << "c bcp time: " << theSolver.statistics().time_spend_in_bcp << "s" << endl;
+    uint64_t total_decomposition_node = 0;
+    for (auto it=theSolver.statistics().decomposition_node.begin(); it!=theSolver.statistics().decomposition_node.end(); it++) {
+      cout << "c L " << it->first << " " << it->second << endl;
+      total_decomposition_node += it->second;
+    } 
+    cout << "c L sum " << total_decomposition_node << endl;
     return 0;
   } else if (weighted == 1 || weighted == 2) {
     sspp::Instance ins(input_file, true);

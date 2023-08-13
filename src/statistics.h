@@ -13,6 +13,8 @@
 #include <vector>
 
 #include <gmpxx.h>
+#include <unordered_map>
+#include <chrono>
 
 #include "structures.h"
 #include "component_types/cacheable_component.h"
@@ -20,7 +22,7 @@
 #include "primitive_types.h"
 
 using namespace std;
-
+using namespace std::chrono;
 template <class T_num>
 class DataAndStatistics {
 public:
@@ -76,6 +78,8 @@ public:
 
   uint64_t num_cached_components_ = 0;
   uint64_t sum_size_cached_components_ = 0;
+  unordered_map<uint32_t, uint64_t> decomposition_node;
+  double time_spend_in_bcp = 0;
 
   // the number of bytes occupied by all
   // components
