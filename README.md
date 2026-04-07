@@ -1,5 +1,7 @@
 # SharpSAT-TD
 
+**This is the modified codebase of SharpSAT-TD. We modified it for SharpASP. Do not use it for propositional model counting**.
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4880703.svg)](https://doi.org/10.5281/zenodo.4880703)
 
 Submission to model counting competition 2021 by Tuukka Korhonen and Matti Järvisalo (University of Helsinki).
