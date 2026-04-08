@@ -9,5 +9,5 @@ else
 fi
 make
 cd ..
-cp build/sharpSAT bin/sharpSAT
+cp build/sharpSAT bin/td
 cp build/flow_cutter_pace17 bin/flow_cutter_pace17

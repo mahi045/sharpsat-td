@@ -23,6 +23,7 @@ SET(CMAKE_C_FLAGS "-std=c99 -Wall -msse4.1 -mpclmul")
 find_library(GMP_LIB gmp)
 find_library(GMPXX_LIB gmpxx)
 find_library(MPFR_LIB mpfr)
+add_definitions( -DMPFR_USE_NO_MACRO )
 
 add_subdirectory(flowcutter)
 
@@ -38,11 +39,11 @@ SET(SOURCES
 	src/clhash/clhash.c
 )
 
-add_executable (sharpSAT src/main.cpp ${SOURCES})
+add_executable (td src/main.cpp ${SOURCES})
 if(STATIC)
-SET_TARGET_PROPERTIES (sharpSAT PROPERTIES LINK_SEARCH_START_STATIC 1)
+SET_TARGET_PROPERTIES (td PROPERTIES LINK_SEARCH_START_STATIC 1)
 endif(STATIC)
-target_link_libraries (sharpSAT ${MPFR_LIB} ${GMPXX_LIB} ${GMP_LIB})
+target_link_libraries (td ${MPFR_LIB} ${GMPXX_LIB} ${GMP_LIB})
 
 add_executable (flow_cutter_pace17 flowcutter/pace.cpp)
 if(STATIC)
